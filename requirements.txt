@@ -1,0 +1,9 @@
+agno
+phidata 
+python-dotenv
+yfinance
+packaging
+duckduckgo-search
+flask
+groq
+google-genai
