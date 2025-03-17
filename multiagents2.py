@@ -115,6 +115,16 @@ overall_agent = Agent(
 app = Flask(__name__)
 
 
+@app.route('/')
+def home():
+    return 'WOrking Perfectly fine!'
+
+@app.route('/health')
+def index():
+    query = 'Helo!'
+    overall_response = overall_agent.run(query)
+    return jsonify({"response": str(overall_response)})
+
 @app.route('/query', methods=['POST'])
 def query_endpoint():
     data = request.get_json()
