@@ -7,16 +7,11 @@ from agno.tools.yfinance import YFinanceTools
 from dotenv import load_dotenv
 import os
 
-# Load environment variables (API keys)
 
 load_dotenv()
+
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
-
-# -------------------------
-# Define the Finance Agent Team
-# -------------------------
-
 
 web_agent=Agent(
     name="Web Agent",
@@ -26,7 +21,6 @@ web_agent=Agent(
     instructions="Always include the sources",
     show_tool_calls=True,
 )
-
 
 finance_agent = Agent(
     name="Finance Agent",
@@ -41,6 +35,7 @@ finance_agent = Agent(
     ),
     show_tool_calls=True,
 )
+
 finance_team = Agent(
     team=[finance_agent],
     model=Groq(id="qwen-2.5-32b"),
@@ -51,9 +46,6 @@ finance_team = Agent(
     show_tool_calls=True,
 )
 
-# -------------------------
-# Define the Essay Writing Agent Team
-# -------------------------
 essay_agent = Agent(
     name="Essay Agent",
     role="Draft detailed essays based on input",
@@ -78,18 +70,12 @@ essay_team = Agent(
 
 )
 
-
 agent_team=Agent(
     team=[web_agent,finance_agent, essay_agent],
     model=Groq(id="qwen-2.5-32b"),
     instructions=["Always include sources", "Use tables to display data"],
     show_tool_calls=True,
 )
-
-# -------------------------
-# Define the Autonomous Orchestrator Agent
-# -------------------------
-
 
 overall_agent = Agent(
     name="Autonomous Orchestrator",
@@ -109,11 +95,7 @@ overall_agent = Agent(
     team=[agent_team]
 )
 
-# -------------------------
-# Set Up the Flask App and Endpoint
-# -------------------------
 app = Flask(__name__)
-
 
 @app.route('/')
 def home():
@@ -132,7 +114,8 @@ def query_endpoint():
     
     # The overall agent handles the query autonomously.
     overall_response = overall_agent.run(query)
-    return jsonify({"response": str(overall_response)})
+    print(overall_response.to_dict())
+    return jsonify({"response": overall_response.to_dict()['messages'][-1]['content'] })
 
 
 if __name__ == '__main__':
