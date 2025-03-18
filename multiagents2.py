@@ -110,9 +110,11 @@ def index():
 @app.route('/query', methods=['POST'])
 def query_endpoint():
     data = request.get_json()
+    print("Data: ", data)
     query = data.get('query', '')
     
     # The overall agent handles the query autonomously.
+    print("Query: ", query)
     overall_response = overall_agent.run(query)
     print(overall_response.to_dict())
     return jsonify({"response": overall_response.to_dict()['messages'][-1]['content'] })
